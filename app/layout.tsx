@@ -45,11 +45,11 @@ export const metadata: Metadata = {
     description: 'Boost your sales and improve your visibility and domain authority, attracting more clients and delivering exceptional SEO results.',
     images: [
       {
-        url: `${baseUrl}/og-image.jpg`,
+        url: 'https://i.ibb.co/C3TxS4j6/seo.png',
         width: 1200,
         height: 630,
-        alt: 'SEO360 - Personal Tool for Client Acquisition',
-        type: 'image/jpeg',
+        alt: 'SEO360 - Professional Tool for Client Acquisition and Domain Authority Boost',
+        type: 'image/png',
       },
     ],
   },
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     creator: '@seo360xyz',
     title: 'SEO360 - Boost Client Visibility & Domain Authority',
     description: 'Boost your sales and improve your visibility and domain authority, attracting more clients and delivering exceptional SEO results.',
-    images: [`${baseUrl}/og-image.jpg`],
+    images: ['https://i.ibb.co/C3TxS4j6/seo.png'],
   },
   alternates: {
     canonical: baseUrl,
@@ -105,10 +105,12 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://i.ibb.co" />
         
         {/* DNS prefetch for better performance */}
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//www.google-analytics.com" />
+        <link rel="dns-prefetch" href="//i.ibb.co" />
         
         <Suspense fallback={null}>
           <GoogleAnalytics />
@@ -135,6 +137,7 @@ export default function RootLayout({
               "softwareVersion": "1.0.0",
               "datePublished": "2025-01-01",
               "dateModified": new Date().toISOString().split('T')[0],
+              "image": "https://i.ibb.co/C3TxS4j6/seo.png",
               "offers": {
                 "@type": "Offer",
                 "price": "0",
@@ -163,7 +166,7 @@ export default function RootLayout({
                 "@type": "Organization",
                 "name": "SEO360",
                 "url": baseUrl,
-                "logo": `${baseUrl}/favicon-32x32.png`,
+                "logo": "https://i.ibb.co/C3TxS4j6/seo.png",
                 "sameAs": [
                   "https://twitter.com/seo360xyz"
                 ]
@@ -187,7 +190,7 @@ export default function RootLayout({
               "@type": "Organization",
               "name": "SEO360",
               "url": baseUrl,
-              "logo": `${baseUrl}/favicon-32x32.png`,
+              "logo": "https://i.ibb.co/C3TxS4j6/seo.png",
               "description": "Professional SEO tool for boosting client website visibility, Domain Authority, and backlinks.",
               "foundingDate": "2025",
               "contactPoint": {
