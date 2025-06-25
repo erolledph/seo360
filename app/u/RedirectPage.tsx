@@ -21,6 +21,14 @@ interface RedirectData {
   type: string
 }
 
+// Function to clean title and avoid duplicates
+function cleanTitle(title: string): string {
+  return title
+    .replace(/\s*\|\s*SEO360\s*$/i, '')
+    .replace(/\s*SEO360\s*$/i, '')
+    .trim()
+}
+
 function RedirectPageContent() {
   const searchParams = useSearchParams()
   const [allRedirects, setAllRedirects] = useState<RedirectsData>({})
@@ -43,7 +51,9 @@ function RedirectPageContent() {
     setMounted(true)
     if (typeof window !== 'undefined') {
       setCurrentUrl(window.location.href)
-      document.title = `${title} | SEO360`
+      // Clean the title to avoid duplicates
+      const cleanedTitle = cleanTitle(title)
+      document.title = `${cleanedTitle} | SEO360`
     }
   }, [title])
 
@@ -199,7 +209,7 @@ function RedirectPageContent() {
             <div className="mb-8 sm:mb-12">
               <SocialShare
                 url={currentUrl}
-                title={title}
+                title={cleanTitle(title)} // Use cleaned title for social sharing
                 description={desc}
                 image={image}
                 hashtags={hashtags}
