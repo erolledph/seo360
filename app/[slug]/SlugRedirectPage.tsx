@@ -15,6 +15,14 @@ interface Props {
   currentSlug: string
 }
 
+// Function to clean title and avoid duplicates
+function cleanTitle(title: string): string {
+  return title
+    .replace(/\s*\|\s*SEO360\s*$/i, '')
+    .replace(/\s*SEO360\s*$/i, '')
+    .trim()
+}
+
 export default function SlugRedirectPage({ data, allRedirects, currentSlug }: Props) {
   const [currentUrl, setCurrentUrl] = useState('')
   const [mounted, setMounted] = useState(false)
@@ -24,7 +32,9 @@ export default function SlugRedirectPage({ data, allRedirects, currentSlug }: Pr
     setMounted(true)
     if (typeof window !== 'undefined') {
       setCurrentUrl(window.location.href)
-      document.title = `${data.title} | SEO360`
+      // Clean the title to avoid duplicates
+      const cleanedTitle = cleanTitle(data.title)
+      document.title = `${cleanedTitle} | SEO360`
     }
   }, [data.title])
 
@@ -162,7 +172,7 @@ export default function SlugRedirectPage({ data, allRedirects, currentSlug }: Pr
             <div className="mb-8 sm:mb-12">
               <SocialShare
                 url={currentUrl}
-                title={data.title}
+                title={cleanTitle(data.title)} // Use cleaned title for social sharing
                 description={data.desc}
                 image={data.image}
                 hashtags={hashtags}
