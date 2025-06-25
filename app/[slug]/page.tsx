@@ -62,6 +62,15 @@ function getValidOpenGraphType(type: string): string {
   return typeMap[type.toLowerCase()] || 'website'
 }
 
+// Function to clean title and avoid duplicates
+function cleanTitle(title: string): string {
+  // Remove any existing "| SEO360" or "SEO360" suffixes to avoid duplicates
+  return title
+    .replace(/\s*\|\s*SEO360\s*$/i, '')
+    .replace(/\s*SEO360\s*$/i, '')
+    .trim()
+}
+
 export async function generateMetadata(
   { params }: { params: { slug: string } }
 ): Promise<Metadata> {
@@ -77,16 +86,19 @@ export async function generateMetadata(
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://seo360.xyz'
   const canonicalUrl = `${baseUrl}/${params.slug}`
   const validOgType = getValidOpenGraphType(data.type)
+  
+  // Clean the title to avoid duplicates
+  const cleanedTitle = cleanTitle(data.title)
 
   return {
-    title: `${data.title} | SEO360`,
+    title: `${cleanedTitle} | SEO360`,
     description: data.desc,
     keywords: data.keywords,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: data.title,
+      title: cleanedTitle, // Use cleaned title without SEO360 suffix
       description: data.desc,
       type: validOgType as any,
       images: data.image ? [data.image] : [],
@@ -95,7 +107,7 @@ export async function generateMetadata(
     },
     twitter: {
       card: 'summary_large_image',
-      title: data.title,
+      title: cleanedTitle, // Use cleaned title without SEO360 suffix
       description: data.desc,
       images: data.image ? [data.image] : [],
     },
