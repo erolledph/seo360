@@ -32,6 +32,36 @@ async function getAllRedirects(): Promise<RedirectsData> {
   }
 }
 
+// Function to map custom types to valid OpenGraph types
+function getValidOpenGraphType(type: string): string {
+  const typeMap: { [key: string]: string } = {
+    'website': 'website',
+    'article': 'article',
+    'video': 'video.other',
+    'product': 'website', // Map product to website
+    'blog': 'article',
+    'news': 'article',
+    'service': 'website',
+    'portfolio': 'website',
+    'landing': 'website',
+    'course': 'website',
+    'ebook': 'book',
+    'music': 'music.song',
+    'podcast': 'video.other',
+    'app': 'website',
+    'tool': 'website',
+    'software': 'website',
+    'game': 'website',
+    'event': 'website',
+    'business': 'website',
+    'profile': 'profile',
+    'company': 'website',
+    'organization': 'website'
+  }
+  
+  return typeMap[type.toLowerCase()] || 'website'
+}
+
 export async function generateMetadata(
   { params }: { params: { slug: string } }
 ): Promise<Metadata> {
@@ -46,6 +76,7 @@ export async function generateMetadata(
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://seo360.xyz'
   const canonicalUrl = `${baseUrl}/${params.slug}`
+  const validOgType = getValidOpenGraphType(data.type)
 
   return {
     title: `${data.title} | SEO360`,
@@ -57,7 +88,7 @@ export async function generateMetadata(
     openGraph: {
       title: data.title,
       description: data.desc,
-      type: data.type as any,
+      type: validOgType as any,
       images: data.image ? [data.image] : [],
       siteName: data.site_name,
       url: canonicalUrl,
