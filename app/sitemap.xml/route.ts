@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
 import { redirectsApi } from '../../lib/redirectsApi'
 
-// XML escaping utility function
+// XML escaping utility function - FIXED: Proper ampersand escaping
 function escapeXml(unsafe: string): string {
   return unsafe
-    .replace(/&/g, '&amp;')
+    .replace(/&/g, '&amp;')  // CRITICAL FIX: & must be escaped to &amp; for valid XML
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
