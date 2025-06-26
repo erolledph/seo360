@@ -1,6 +1,16 @@
 import { NextResponse } from 'next/server'
 import { redirectsApi } from '../../lib/redirectsApi'
 
+// XML escaping utility function
+function escapeXml(unsafe: string): string {
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;')
+}
+
 export async function GET() {
   try {
     // Force the correct base URL
@@ -26,58 +36,55 @@ export async function GET() {
     
     // Add main pages
     sitemapEntries.push(`  <url>
-    <loc>${baseUrl}</loc>
+    <loc>${escapeXml(baseUrl)}</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>`)
     
     sitemapEntries.push(`  <url>
-    <loc>${baseUrl}/contact</loc>
+    <loc>${escapeXml(`${baseUrl}/contact`)}</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>`)
     
     sitemapEntries.push(`  <url>
-    <loc>${baseUrl}/privacy-policy</loc>
+    <loc>${escapeXml(`${baseUrl}/privacy-policy`)}</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>`)
     
     sitemapEntries.push(`  <url>
-    <loc>${baseUrl}/terms-of-service</loc>
+    <loc>${escapeXml(`${baseUrl}/terms-of-service`)}</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>`)
     
     sitemapEntries.push(`  <url>
-    <loc>${baseUrl}/disclaimer</loc>
+    <loc>${escapeXml(`${baseUrl}/disclaimer`)}</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>`)
     
-    // Add each redirect slug
+    // Add each redirect slug with proper XML escaping
     Object.entries(redirects).forEach(([slug]) => {
-      // Properly encode the slug for XML
-      const escapedSlug = slug.replace(/&/g, '&amp;')
-                             .replace(/</g, '&lt;')
-                             .replace(/>/g, '&gt;')
-                             .replace(/"/g, '&quot;')
-                             .replace(/'/g, '&apos;')
+      // Construct the full URL and properly escape it for XML
+      const fullUrl = `${baseUrl}/${encodeURIComponent(slug)}`
+      const escapedUrl = escapeXml(fullUrl)
       
       sitemapEntries.push(`  <url>
-    <loc>${baseUrl}/${encodeURIComponent(slug)}</loc>
+    <loc>${escapedUrl}</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>`)
     })
     
-    // Build complete sitemap
+    // Build complete sitemap with proper XML declaration and namespace
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${sitemapEntries.join('\n')}
@@ -86,6 +93,24 @@ ${sitemapEntries.join('\n')}
     console.log('Sitemap generated successfully with base URL:', baseUrl)
     console.log('Total URLs in sitemap:', Object.keys(redirects).length + 5) // +5 for static pages
     console.log('Sitemap size:', sitemap.length, 'characters')
+    
+    // Validate XML structure before returning
+    try {
+      // Basic XML validation - check for proper structure
+      if (!sitemap.includes('<?xml version="1.0" encoding="UTF-8"?>')) {
+        throw new Error('Missing XML declaration')
+      }
+      if (!sitemap.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')) {
+        throw new Error('Missing urlset declaration')
+      }
+      if (!sitemap.includes('</urlset>')) {
+        throw new Error('Missing closing urlset tag')
+      }
+      console.log('XML structure validation passed')
+    } catch (validationError) {
+      console.error('XML validation failed:', validationError)
+      throw validationError
+    }
     
     // Generate unique ETag based on content and timestamp
     const contentHash = Buffer.from(sitemap).toString('base64').slice(0, 16)
@@ -129,31 +154,31 @@ ${sitemapEntries.join('\n')}
     const basicSitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>${baseUrl}</loc>
+    <loc>${escapeXml(baseUrl)}</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>${baseUrl}/contact</loc>
+    <loc>${escapeXml(`${baseUrl}/contact`)}</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>${baseUrl}/privacy-policy</loc>
+    <loc>${escapeXml(`${baseUrl}/privacy-policy`)}</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>${baseUrl}/terms-of-service</loc>
+    <loc>${escapeXml(`${baseUrl}/terms-of-service`)}</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>${baseUrl}/disclaimer</loc>
+    <loc>${escapeXml(`${baseUrl}/disclaimer`)}</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
